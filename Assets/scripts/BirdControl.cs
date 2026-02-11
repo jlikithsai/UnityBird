@@ -7,6 +7,7 @@ public class BirdControl : MonoBehaviour {
 	public int rotateRate = 10;
 	public float upSpeed = 10;
     public GameObject scoreMgr;
+    public GameObject gameMain;
 
     public AudioClip jumpUp;
     public AudioClip hit;
@@ -16,6 +17,7 @@ public class BirdControl : MonoBehaviour {
 
 	private bool dead = false;
 	private bool landed = false;
+    private int currentScore = 0;
 
     private Sequence birdSequence;
 
@@ -77,6 +79,12 @@ public class BirdControl : MonoBehaviour {
 
                 GetComponent<Animator>().SetTrigger("die");
                 AudioSource.PlayClipAtPoint(hit, Vector3.zero);
+                
+                // Trigger Game Over screen
+                if (gameMain != null)
+                {
+                    gameMain.GetComponent<GameMain>().OnGameOver();
+                }
             }
 
 			
@@ -93,6 +101,17 @@ public class BirdControl : MonoBehaviour {
         if (other.name == "pass_trigger")
         {
             scoreMgr.GetComponent<ScoreMgr>().AddScore();
+            
+            // Update current score for background color feedback
+            ScoreMgr scoreMgrComponent = scoreMgr.GetComponent<ScoreMgr>();
+            currentScore++;
+            
+            // Update background color based on new score
+            if (gameMain != null)
+            {
+                gameMain.GetComponent<GameMain>().UpdateBackgroundColor(currentScore);
+            }
+            
             AudioSource.PlayClipAtPoint(score, Vector3.zero);
         }
 
